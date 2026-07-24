@@ -5,6 +5,7 @@ const symbols = [
   "ETHUSDT",
   "SOLUSDT",
   "BNBUSDT",
+  "OKBUSDT",
 ];
 
 export async function getBinancePrices() {

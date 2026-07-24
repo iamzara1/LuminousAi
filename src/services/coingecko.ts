@@ -2,7 +2,7 @@ const COINGECKO_URL = "https://api.coingecko.com/api/v3";
 
 export async function getCoinGeckoData() {
   const response = await fetch(
-    `${COINGECKO_URL}/coins/markets?vs_currency=usd&ids=bitcoin,ethereum,solana,binancecoin&order=market_cap_desc&sparkline=false`,
+    `${COINGECKO_URL}/coins/markets?vs_currency=usd&ids=bitcoin,ethereum,solana,binancecoin,okb&order=market_cap_desc&sparkline=false`,
     {
       next: {
         revalidate: 300,
@@ -23,5 +23,7 @@ export async function getCoinGeckoData() {
     marketCap: coin.market_cap,
     rank: coin.market_cap_rank,
     image: coin.image,
+    price: coin.current_price,
+    change: coin.price_change_percentage_24h,
   }));
 }
