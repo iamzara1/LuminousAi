@@ -1,62 +1,36 @@
-"use client";
-
-import { useEffect, useState } from "react";
-import {
-  ArrowUpRight,
-  ArrowDownRight,
-  TrendingUp,
-} from "lucide-react";
-
-import { getMarketOverview } from "@/services/marketService";
+"use client"
 
 type Coin = {
-  symbol: string;
-  price: number;
-  change: number;
-};
+  id: string
+  name: string
+  symbol: string
+  image: string
+  price?: number
+  change?: number
+}
 
-export default function MarketsPanel() {
-  const [coins, setCoins] = useState<Coin[]>([]);
-  const [loading, setLoading] = useState(true);
+type MarketsPanelProps = {
+  coins?: Coin[]
+}
 
-  useEffect(() => {
-    async function loadMarket() {
-      try {
-        const data = await getMarketOverview();
-
-        setCoins(data.prices);
-      } catch (error) {
-        console.log(error);
-      } finally {
-        setLoading(false);
-      }
-    }
-
-    loadMarket();
-  }, []);
+export default function MarketsPanel({
+  coins = [],
+}: MarketsPanelProps) {
 
   return (
-    <section className="rounded-3xl border border-white/10 bg-[#10111A] p-6">
+    <div className="rounded-3xl border border-white/10 bg-white/5 p-6">
 
-      <div className="mb-6 flex items-center justify-between">
-        <div>
-          <h2 className="text-xl font-semibold text-white">
-            Live Markets
-          </h2>
-
-          <p className="text-sm text-gray-400">
-            Real-time crypto prices
-          </p>
-        </div>
-
-        <TrendingUp className="text-purple-400" />
-      </div>
+      <h2 className="mb-6 text-2xl font-bold text-white">
+        Market Overview
+      </h2>
 
 
-      {loading ? (
+      {coins.length === 0 ? (
+
         <p className="text-gray-400">
-          Loading markets...
+          No market data available
         </p>
+
       ) : (
 
         <div className="space-y-4">
@@ -64,46 +38,53 @@ export default function MarketsPanel() {
           {coins.map((coin) => (
 
             <div
-              key={coin.symbol}
-              className="flex items-center justify-between rounded-2xl border border-white/10 bg-white/5 p-4"
+              key={coin.id}
+              className="flex items-center justify-between rounded-2xl bg-white/5 p-4 hover:bg-white/10"
             >
 
-              <div>
-                <p className="font-semibold text-white">
-                  {coin.symbol}
-                </p>
+              <div className="flex items-center gap-3">
 
-                <p className="text-sm text-gray-400">
-                  USD
-                </p>
+                <img
+                  src={coin.image}
+                  alt={coin.name}
+                  className="h-10 w-10 rounded-full"
+                />
+
+                <div>
+
+                  <p className="font-semibold text-white">
+                    {coin.name}
+                  </p>
+
+                  <p className="text-sm uppercase text-gray-400">
+                    {coin.symbol}
+                  </p>
+
+                </div>
+
               </div>
 
 
               <div className="text-right">
 
-                <p className="text-white">
-                  ${coin.price.toLocaleString()}
+                <p className="font-semibold text-white">
+                  ${(coin.price ?? 0).toLocaleString()}
                 </p>
 
-                <div
-                  className={`flex items-center justify-end text-sm ${
-                    coin.change >= 0
-                      ? "text-green-400"
-                      : "text-red-400"
-                  }`}
+
+                <p
+                  className={
+                    (coin.change ?? 0) >= 0
+                      ? "text-green-400 text-sm"
+                      : "text-red-400 text-sm"
+                  }
                 >
+                  {(coin.change ?? 0).toFixed(2)}%
+                </p>
 
-                  {coin.change >= 0 ? (
-                    <ArrowUpRight size={15} />
-                  ) : (
-                    <ArrowDownRight size={15} />
-                  )}
-
-                  {coin.change.toFixed(2)}%
-
-                </div>
 
               </div>
+
 
             </div>
 
@@ -113,6 +94,6 @@ export default function MarketsPanel() {
 
       )}
 
-    </section>
-  );
+    </div>
+  )
 }

@@ -63,7 +63,12 @@
           "search": ""
         }
       ],
-      "remotePatterns": [],
+      "remotePatterns": [
+        {
+          "protocol": "https",
+          "hostname": "coin-images.coingecko.com"
+        }
+      ],
       "qualities": [
         75
       ],

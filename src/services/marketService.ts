@@ -9,36 +9,26 @@ export async function getMarketOverview() {
     getDexTrending(),
   ]);
 
-  const coinPrices =
-    coingecko.status === "fulfilled"
-      ? coingecko.value.map((coin: any) => ({
-          symbol: coin.symbol,
-          price: coin.price,
-          change: coin.change ?? 0,
-          volume: 0,
-        }))
-      : [];
+  const binancePrices =
+    binance.status === "fulfilled" ? binance.value : [];
 
-  const combinedPrices = [
-  ...(binance.status === "fulfilled" ? binance.value : []),
-  ...coinPrices,
-];
+  const coinGeckoPrices =
+    coingecko.status === "fulfilled" ? coingecko.value : [];
 
-const uniquePrices = Array.from(
-  new Map(combinedPrices.map((coin: any) => [coin.symbol, coin])).values()
-);
+  const merged = coinGeckoPrices.map((coin: any) => {
+    const live = binancePrices.find(
+      (item: any) => item.symbol === coin.symbol
+    );
 
-return {
-  prices: uniquePrices,
+    return {
+      ...coin,
+      price: live?.price ?? coin.price,
+      change: live?.change ?? coin.change,
+    };
+  });
 
-    market:
-      coingecko.status === "fulfilled"
-        ? coingecko.value
-        : [],
-
-    trending:
-      dex.status === "fulfilled"
-        ? dex.value
-        : [],
+  return {
+    prices: merged,
+    trending: dex.status === "fulfilled" ? dex.value : [],
   };
 }

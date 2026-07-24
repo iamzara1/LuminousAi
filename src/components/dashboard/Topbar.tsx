@@ -1,28 +1,18 @@
 "use client";
 
-import { Bell, Search, UserCircle2 } from "lucide-react";
+import { Bell, UserCircle2 } from "lucide-react";
+import SearchBar from "@/components/search/SearchBar";
 
 export default function Topbar() {
   return (
     <header className="sticky top-0 z-30 flex h-20 items-center justify-between border-b border-white/10 bg-[#09090B]/80 px-6 backdrop-blur-xl">
-
       <div className="flex items-center gap-4">
-        <div className="relative w-80 max-w-full">
-          <Search
-            size={18}
-            className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500"
-          />
-
-          <input
-            type="text"
-            placeholder="Search coins, wallets, tokens..."
-            className="w-full rounded-2xl border border-white/10 bg-white/5 py-3 pl-11 pr-4 text-white placeholder:text-gray-500 outline-none transition focus:border-purple-500"
-          />
+        <div className="w-96 max-w-full">
+          <SearchBar />
         </div>
       </div>
 
       <div className="flex items-center gap-4">
-
         <div className="hidden rounded-2xl border border-white/10 bg-white/5 px-5 py-3 md:block">
           <p className="text-xs text-gray-400">
             Portfolio Value
@@ -50,9 +40,7 @@ export default function Topbar() {
             </p>
           </div>
         </button>
-
       </div>
-
     </header>
   );
 }

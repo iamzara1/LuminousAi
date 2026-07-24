@@ -1,9 +1,15 @@
-import Sidebar from "@/components/dashboard/Sidebar";
-import Topbar from "@/components/dashboard/Topbar";
-import ChatPanel from "@/components/dashboard/ChatPanel";
-import MarketsPanel from "@/components/dashboard/MarketsPanel";
+import Sidebar from "@/components/dashboard/Sidebar"
+import Topbar from "@/components/dashboard/Topbar"
+import ChatPanel from "@/components/dashboard/ChatPanel"
+import MarketsPanel from "@/components/dashboard/MarketsPanel"
+import { getCoinGeckoData } from "@/services/coingecko"
 
-export default function DashboardPage() {
+
+export default async function DashboardPage() {
+
+  const coins = await getCoinGeckoData()
+
+
   return (
     <div className="min-h-screen bg-[#05050A] text-white flex">
 
@@ -16,6 +22,7 @@ export default function DashboardPage() {
         <div className="p-6">
 
           <div className="mb-8">
+
             <h1 className="text-3xl font-bold">
               Welcome to LuminousAI
             </h1>
@@ -23,10 +30,12 @@ export default function DashboardPage() {
             <p className="mt-2 text-gray-400">
               Your AI-powered crypto intelligence workspace.
             </p>
+
           </div>
 
 
           <div className="grid gap-6 lg:grid-cols-3">
+
 
             <div className="lg:col-span-2">
               <ChatPanel />
@@ -34,15 +43,19 @@ export default function DashboardPage() {
 
 
             <div>
-              <MarketsPanel />
+              <MarketsPanel coins={coins} />
             </div>
+
 
           </div>
 
+
         </div>
+
 
       </main>
 
+
     </div>
-  );
+  )
 }

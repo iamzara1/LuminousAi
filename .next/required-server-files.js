@@ -63,7 +63,12 @@ self.__SERVER_FILES_MANIFEST={
           "search": ""
         }
       ],
-      "remotePatterns": [],
+      "remotePatterns": [
+        {
+          "protocol": "https",
+          "hostname": "coin-images.coingecko.com"
+        }
+      ],
       "qualities": [
         75
       ],
