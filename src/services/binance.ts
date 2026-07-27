@@ -1,37 +1,42 @@
-const BINANCE_URL = "https://api.binance.com/api/v3";
+const BINANCE_API = "https://api.binance.com/api/v3";
 
-const symbols = [
-  "BTCUSDT",
-  "ETHUSDT",
-  "SOLUSDT",
-  "BNBUSDT",
-  "OKBUSDT",
-];
+export async function getBinancePrice(symbol: string) {
+  try {
+    const response = await fetch(
+      `${BINANCE_API}/ticker/24hr?symbol=${symbol}`,
+      {
+        next: {
+          revalidate: 15,
+        },
+      }
+    );
 
-export async function getBinancePrices() {
-  const response = await fetch(
-    `${BINANCE_URL}/ticker/24hr`,
-    {
-      next: {
-        revalidate: 30,
-      },
+    if (!response.ok) {
+      return null;
     }
+
+    const data = await response.json();
+
+    return {
+      symbol: data.symbol,
+      price: Number(data.lastPrice),
+      change: Number(data.priceChangePercent),
+      volume: Number(data.volume),
+      high: Number(data.highPrice),
+      low: Number(data.lowPrice),
+    };
+  } catch (error) {
+    console.error("Binance API Error:", error);
+    return null;
+  }
+}
+
+export async function getBinancePrices(
+  symbols: string[] = ["BTCUSDT", "ETHUSDT", "SOLUSDT"]
+) {
+  const results = await Promise.all(
+    symbols.map((symbol) => getBinancePrice(symbol))
   );
 
-  if (!response.ok) {
-    throw new Error("Binance API failed");
-  }
-
-  const data = await response.json();
-
-  return data
-    .filter((coin: any) =>
-      symbols.includes(coin.symbol)
-    )
-    .map((coin: any) => ({
-      symbol: coin.symbol.replace("USDT", ""),
-      price: Number(coin.lastPrice),
-      change: Number(coin.priceChangePercent),
-      volume: Number(coin.volume),
-    }));
+  return results.filter(Boolean);
 }

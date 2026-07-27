@@ -1,61 +1,29 @@
-import Sidebar from "@/components/dashboard/Sidebar"
-import Topbar from "@/components/dashboard/Topbar"
-import ChatPanel from "@/components/dashboard/ChatPanel"
-import MarketsPanel from "@/components/dashboard/MarketsPanel"
-import { getCoinGeckoData } from "@/services/coingecko"
+import PortfolioCard from "@/components/portfolio/PortfolioCard";
+import WalletConnectButton from "@/components/wallet/WalletConnectButton";
 
-
-export default async function DashboardPage() {
-
-  const coins = await getCoinGeckoData()
-
-
+export default function DashboardPage() {
   return (
-    <div className="min-h-screen bg-[#05050A] text-white flex">
+    <main className="min-h-screen bg-[#050510] p-6">
 
-      <Sidebar />
+      <div className="mx-auto max-w-5xl space-y-6">
 
-      <main className="flex-1">
+        <div>
+          <h1 className="text-3xl font-bold text-white">
+            LuminousAI Dashboard
+          </h1>
 
-        <Topbar />
-
-        <div className="p-6">
-
-          <div className="mb-8">
-
-            <h1 className="text-3xl font-bold">
-              Welcome to LuminousAI
-            </h1>
-
-            <p className="mt-2 text-gray-400">
-              Your AI-powered crypto intelligence workspace.
-            </p>
-
-          </div>
-
-
-          <div className="grid gap-6 lg:grid-cols-3">
-
-
-            <div className="lg:col-span-2">
-              <ChatPanel />
-            </div>
-
-
-            <div>
-              <MarketsPanel coins={coins} />
-            </div>
-
-
-          </div>
-
-
+          <p className="mt-2 text-gray-400">
+            Your AI-powered crypto intelligence terminal
+          </p>
         </div>
 
 
-      </main>
+        <WalletConnectButton />
 
+        <PortfolioCard />
 
-    </div>
-  )
+      </div>
+
+    </main>
+  );
 }

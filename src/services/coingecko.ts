@@ -1,115 +1,92 @@
-const COINGECKO_URL = "https://api.coingecko.com/api/v3"
+import { apiFetch } from "./api";
 
+const BASE_URL = "https://api.coingecko.com/api/v3";
 
-async function safeFetch(url: string) {
-  try {
-    const response = await fetch(url, {
-      next: {
-        revalidate: 60,
-      },
-    })
-
-
-    if (!response.ok) {
-      console.log(
-        "CoinGecko failed:",
-        response.status
-      )
-
-      return null
-    }
-
-
-    const text = await response.text()
-
-
-    if (!text.startsWith("{") && !text.startsWith("[")) {
-      console.log(
-        "CoinGecko invalid response:",
-        text
-      )
-
-      return null
-    }
-
-
-    return JSON.parse(text)
-
-
-  } catch (error) {
-
-    console.error(
-      "CoinGecko request error:",
-      error
-    )
-
-    return null
-  }
+export interface SearchResponse {
+  coins: {
+    id: string;
+    name: string;
+    symbol: string;
+    thumb: string;
+  }[];
 }
 
-
-
-export async function getCoinGeckoData() {
-
-  const data = await safeFetch(
-    `${COINGECKO_URL}/coins/markets?vs_currency=usd&ids=bitcoin,ethereum,binancecoin,solana,okb&order=market_cap_desc&sparkline=false&price_change_percentage=24h`
-  )
-
-
-  if (!data) {
-    return []
-  }
-
-
-  return data.map((coin: any) => ({
-    id: coin.id,
-    name: coin.name,
-    symbol: coin.symbol?.toUpperCase() ?? "",
-    image: coin.image,
-    price: coin.current_price ?? 0,
-    change: coin.price_change_percentage_24h ?? 0,
-    marketCap: coin.market_cap ?? 0,
-    volume: coin.total_volume ?? 0,
-    rank: coin.market_cap_rank ?? 0,
-  }))
+export interface TrendingResponse {
+  coins: {
+    item: {
+      id: string;
+      name: string;
+      symbol: string;
+      thumb: string;
+      market_cap_rank: number;
+    };
+  }[];
 }
 
-
-
-
-
-export async function getTokenDetails(id: string) {
-
-  const data = await safeFetch(
-    `${COINGECKO_URL}/coins/${id}`
-  )
-
-
-  return data ?? null
-
+export interface TokenDetails {
+  id: string;
+  name: string;
+  symbol: string;
+  image: {
+    large: string;
+  };
+  description: {
+    en: string;
+  };
+  market_data: {
+    current_price: {
+      usd: number;
+    };
+    market_cap: {
+      usd: number;
+    };
+    high_24h: {
+      usd: number;
+    };
+    low_24h: {
+      usd: number;
+    };
+  };
 }
 
+export function searchTokens(query: string) {
+  return apiFetch<SearchResponse>(
+    `${BASE_URL}/search?query=${encodeURIComponent(query)}`
+  );
+}
 
+export function getTrendingCoins() {
+  return apiFetch<TrendingResponse>(
+    `${BASE_URL}/search/trending`
+  );
+}
 
+export function getTokenDetails(id: string) {
+  return apiFetch<TokenDetails>(
+    `${BASE_URL}/coins/${id}`
+  );
+}
 
+export function getTokenChart(id: string) {
+  return apiFetch(
+    `${BASE_URL}/coins/${id}/market_chart?vs_currency=usd&days=7`
+  );
+}
 
-export async function getTokenChart(id: string) {
+export function getGlobalMarket() {
+  return apiFetch(
+    `${BASE_URL}/global`
+  );
+}
 
-  const data = await safeFetch(
-    `${COINGECKO_URL}/coins/${id}/market_chart?vs_currency=usd&days=7`
-  )
+export function getMarketPrices(ids?: string[]) {
+  const coins = ids?.join(",") ?? "bitcoin,ethereum,solana,bnb";
 
+  return apiFetch(
+    `${BASE_URL}/simple/price?ids=${coins}&vs_currencies=usd&include_24hr_change=true`
+  );
+}
 
-  if (!data?.prices) {
-    return null
-  }
-
-
-  return data.prices.map(
-    (item: [number, number]) => ({
-      time: item[0],
-      price: item[1],
-    })
-  )
-
+export function getCoinGeckoData(ids?: string[]) {
+  return getMarketPrices(ids);
 }

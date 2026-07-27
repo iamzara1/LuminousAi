@@ -1,11 +1,2 @@
-{"timestamp":"00:00:16.645","source":"Server","level":"LOG","message":""}
-{"timestamp":"00:03:20.405","source":"Server","level":"LOG","message":"○ Compiling /dashboard ..."}
-{"timestamp":"00:03:45.273","source":"Browser","level":"INFO","message":"%cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold"}
-{"timestamp":"00:04:05.132","source":"Server","level":"LOG","message":"○ Compiling /token/[id] ..."}
-{"timestamp":"00:04:43.953","source":"Server","level":"LOG","message":"CoinGecko failed: 429"}
-{"timestamp":"00:04:50.886","source":"Browser","level":"LOG","message":"CoinGecko error: 429"}
-{"timestamp":"00:04:53.762","source":"Browser","level":"LOG","message":"CoinGecko error: 429"}
-{"timestamp":"00:04:54.818","source":"Browser","level":"LOG","message":"CoinGecko error: 429"}
-{"timestamp":"00:04:56.288","source":"Browser","level":"LOG","message":"CoinGecko error: 429"}
-{"timestamp":"00:05:00.090","source":"Browser","level":"LOG","message":"CoinGecko error: 429"}
-{"timestamp":"00:05:06.195","source":"Browser","level":"LOG","message":"CoinGecko error: 429"}
+{"timestamp":"00:00:19.326","source":"Server","level":"LOG","message":""}
+{"timestamp":"00:00:22.422","source":"Server","level":"LOG","message":"○ Compiling /news ..."}

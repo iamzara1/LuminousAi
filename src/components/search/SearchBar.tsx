@@ -1,174 +1,127 @@
-"use client"
+"use client";
 
-import { useState, useEffect } from "react"
-import { useRouter } from "next/navigation"
-
-type Token = {
-  id: string
-  name: string
-  symbol: string
-  thumb: string
-}
+import Link from "next/link";
+import { useState } from "react";
+import { Search } from "lucide-react";
+import { searchCoins } from "@/services/search";
+import { searchDex } from "@/services/dexscreener";
 
 export default function SearchBar() {
-  const [query, setQuery] = useState("")
-  const [results, setResults] = useState<Token[]>([])
-  const [loading, setLoading] = useState(false)
+  const [query, setQuery] = useState("");
+  const [coins, setCoins] = useState<any[]>([]);
+  const [pairs, setPairs] = useState<any[]>([]);
+  const [loading, setLoading] = useState(false);
 
-  const router = useRouter()
+  async function handleSearch(value: string) {
+    setQuery(value);
 
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-
-      if (query.trim()) {
-        searchTokens(query)
-      } else {
-        setResults([])
-      }
-
-    }, 700)
-
-
-    return () => clearTimeout(timer)
-
-  }, [query])
-
-
-  async function searchTokens(value: string) {
-
-    try {
-
-      setLoading(true)
-
-      const res = await fetch(
-        `https://api.coingecko.com/api/v3/search?query=${encodeURIComponent(value)}`
-      )
-
-
-      if (!res.ok) {
-        console.log("CoinGecko error:", res.status)
-        setResults([])
-        return
-      }
-
-
-      const data = await res.json()
-
-
-      const filtered = data.coins
-        .filter((coin: Token) =>
-          coin.name &&
-          coin.symbol &&
-          coin.id
-        )
-        .slice(0, 8)
-
-
-      setResults(filtered)
-
-
-    } catch (error) {
-
-      console.error("Search error:", error)
-      setResults([])
-
-    } finally {
-
-      setLoading(false)
-
+    if (!value.trim()) {
+      setCoins([]);
+      setPairs([]);
+      return;
     }
 
+    setLoading(true);
+
+    try {
+      const [coinData, dexData] = await Promise.all([
+        searchCoins(value),
+        searchDex(value),
+      ]);
+
+      setCoins(coinData || []);
+      setPairs(dexData?.pairs || []);
+
+    } catch (error) {
+      console.error("Search error:", error);
+      setCoins([]);
+      setPairs([]);
+    }
+
+    setLoading(false);
   }
 
-
-
   return (
-
     <div className="relative w-full">
 
+      <div className="relative">
+        <Search
+          size={18}
+          className="absolute left-4 top-3.5 text-gray-500"
+        />
 
-      <input
-
-        value={query}
-
-        onChange={(e) =>
-          setQuery(e.target.value)
-        }
-
-        placeholder="Search tokens..."
-
-        className="w-full rounded-2xl border border-white/10 bg-white/5 px-5 py-3 text-white outline-none"
-
-      />
-
+        <input
+          value={query}
+          onChange={(e) => handleSearch(e.target.value)}
+          placeholder="Search coin or paste contract address..."
+          className="w-full rounded-xl border border-purple-500/20 bg-black/40 py-3 pl-12 pr-4 text-white outline-none"
+        />
+      </div>
 
 
       {loading && (
-
         <p className="mt-2 text-sm text-gray-400">
           Searching...
         </p>
-
       )}
 
 
+      {(coins.length > 0 || pairs.length > 0) && (
+        <div className="absolute z-50 mt-2 w-full rounded-xl border border-purple-500/20 bg-[#09090F] p-3">
 
-      {results.length > 0 && (
-
-        <div className="absolute z-50 mt-2 w-full rounded-2xl border border-white/10 bg-black p-3">
-
-
-          {results.map((token) => (
-
-            <button
-
-              key={token.id}
-
-              onClick={() =>
-                router.push(`/token/${token.id}`)
-              }
-
-              className="flex w-full items-center gap-3 rounded-xl p-3 hover:bg-white/10"
-
+          {coins.map((coin) => (
+            <Link
+              key={coin.id}
+              href={`/token/${coin.id}`}
+              className="flex items-center gap-3 rounded-lg p-3 hover:bg-white/10"
             >
 
               <img
-
-                src={token.thumb}
-
-                alt={token.name}
-
+                src={coin.thumb}
+                alt={coin.name}
                 className="h-8 w-8 rounded-full"
-
               />
 
-
-              <div className="text-left">
-
-                <p className="font-semibold text-white">
-                  {token.name}
+              <div>
+                <p className="text-white">
+                  {coin.name}
                 </p>
 
-
-                <p className="text-sm uppercase text-gray-400">
-                  {token.symbol}
+                <p className="text-xs text-gray-400">
+                  {coin.symbol} • CoinGecko
                 </p>
-
               </div>
 
-
-            </button>
-
+            </Link>
           ))}
 
 
-        </div>
+          {pairs.map((pair, index) => (
+            <Link
+              key={index}
+              href={`/token/${pair.baseToken.address}`}
+              className="block rounded-lg p-3 hover:bg-white/10"
+            >
 
+              <p className="text-white">
+                {pair.baseToken.name}
+              </p>
+
+              <p className="text-xs text-gray-400">
+                {pair.baseToken.symbol} • {pair.chainId}
+              </p>
+
+              <p className="mt-1 text-xs text-purple-400">
+                Liquidity: $
+                {(pair.liquidity?.usd || 0).toLocaleString()}
+              </p>
+
+            </Link>
+          ))}
+
+        </div>
       )}
 
-
     </div>
-
-  )
+  );
 }

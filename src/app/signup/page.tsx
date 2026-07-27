@@ -1,125 +1,92 @@
 "use client";
 
-import Link from "next/link";
 import { useState } from "react";
-import { Sparkles } from "lucide-react";
-import { supabase } from "@/lib/supabase";
+import { useRouter } from "next/navigation";
+import { signUp } from "@/services/auth/actions";
 
 export default function SignupPage() {
+  const router = useRouter();
+
+  const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [success, setSuccess] = useState("");
 
-  const handleSignup = async (e: React.FormEvent) => {
+  async function handleSignup(e: React.FormEvent) {
     e.preventDefault();
 
-    setLoading(true);
-    setError("");
-    setSuccess("");
+    try {
+      setLoading(true);
+      setError("");
 
-    const { error } = await supabase.auth.signUp({
-      email,
-      password,
-    });
+      await signUp(email, password);
 
-    if (error) {
-      setError(error.message);
-    } else {
-      setSuccess("Account created. Check your email for verification.");
+      alert("Account created successfully. You can now log in.");
+
+      router.push("/login");
+    } catch (err: any) {
+      setError(err.message || "Signup failed");
+    } finally {
+      setLoading(false);
     }
-
-    setLoading(false);
-  };
+  }
 
   return (
-    <main className="min-h-screen bg-[#070709] text-white flex items-center justify-center px-5">
-      <div className="w-full max-w-md">
+    <main className="min-h-screen flex items-center justify-center bg-[#080812] p-6">
+      <div className="w-full max-w-md rounded-2xl border border-purple-500/20 bg-[#10101A] p-6">
 
-        <div className="text-center mb-10">
-          <Link href="/">
-            <h1 className="text-3xl font-bold">
-              Luminous<span className="text-blue-500">AI</span>
-            </h1>
-          </Link>
+        <h1 className="text-3xl font-bold text-white">
+          Create Account
+        </h1>
 
-          <div className="mt-4 flex justify-center items-center gap-2 text-gray-400">
-            <Sparkles size={16} className="text-blue-500" />
-            Create your AI workspace
-          </div>
-        </div>
+        <p className="mt-2 text-gray-400">
+          Join LuminousAI
+        </p>
 
-        <form
-          onSubmit={handleSignup}
-          className="space-y-5 rounded-2xl border border-white/10 bg-white/5 p-6"
-        >
+        <form onSubmit={handleSignup} className="mt-6 space-y-4">
 
-          <div>
-            <label className="text-sm text-gray-300">
-              Email
-            </label>
+          <input
+            type="text"
+            placeholder="Username"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+            className="w-full rounded-xl border border-purple-500/20 bg-black/40 px-4 py-3 text-white"
+          />
 
-            <input
-              type="email"
-              required
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="you@example.com"
-              className="mt-2 w-full rounded-xl border border-white/10 bg-black/40 px-4 py-3 outline-none focus:border-blue-500"
-            />
-          </div>
+          <input
+            type="email"
+            placeholder="Email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            className="w-full rounded-xl border border-purple-500/20 bg-black/40 px-4 py-3 text-white"
+            required
+          />
 
-
-          <div>
-            <label className="text-sm text-gray-300">
-              Password
-            </label>
-
-            <input
-              type="password"
-              required
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="Create a password"
-              className="mt-2 w-full rounded-xl border border-white/10 bg-black/40 px-4 py-3 outline-none focus:border-blue-500"
-            />
-          </div>
-
+          <input
+            type="password"
+            placeholder="Password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            className="w-full rounded-xl border border-purple-500/20 bg-black/40 px-4 py-3 text-white"
+            required
+          />
 
           {error && (
-            <p className="text-sm text-red-400">
+            <p className="text-red-400 text-sm">
               {error}
             </p>
           )}
 
-          {success && (
-            <p className="text-sm text-green-400">
-              {success}
-            </p>
-          )}
-
-
           <button
             type="submit"
             disabled={loading}
-            className="w-full rounded-xl bg-blue-600 py-3 font-medium hover:bg-blue-500 disabled:opacity-50"
+            className="w-full rounded-xl bg-violet-600 py-3 font-semibold text-white hover:bg-violet-700 disabled:opacity-50"
           >
-            {loading ? "Creating account..." : "Create Account"}
+            {loading ? "Creating Account..." : "Sign Up"}
           </button>
 
         </form>
-
-
-        <p className="mt-6 text-center text-sm text-gray-400">
-          Already have an account?{" "}
-          <Link
-            href="/login"
-            className="text-blue-400 hover:text-blue-300"
-          >
-            Sign in
-          </Link>
-        </p>
 
       </div>
     </main>

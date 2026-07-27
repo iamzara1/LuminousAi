@@ -1,155 +1,143 @@
-import { getTokenDetails, getTokenChart } from "@/services/coingecko"
-import PriceChart from "@/components/token/PriceChart"
+import { getTokenPairs } from "@/services/dexscreener";
 
-type TokenPageProps = {
+type Props = {
   params: Promise<{
-    id: string
-  }>
-}
+    id: string;
+  }>;
+};
 
-export default async function TokenPage({
-  params,
-}: TokenPageProps) {
+export default async function TokenPage({ params }: Props) {
+  const { id } = await params;
 
-  const { id } = await params
+  let pairs: any[] = [];
 
-  const token = await getTokenDetails(id)
-
-  if (!token) {
-    return (
-      <main className="min-h-screen bg-black text-white p-6">
-        <h1 className="text-3xl font-bold">
-          Token not found
-        </h1>
-
-        <p className="mt-3 text-gray-400">
-          This token is unavailable or does not exist.
-        </p>
-      </main>
-    )
+  try {
+    const data = await getTokenPairs(id);
+    pairs = data.pairs || [];
+  } catch (error) {
+    console.error("Token fetch error:", error);
   }
 
-
-  const chart = await getTokenChart(id)
-
-
-  const price =
-    token.market_data?.current_price?.usd ?? 0
-
-  const marketCap =
-    token.market_data?.market_cap?.usd ?? 0
-
-  const change =
-    token.market_data?.price_change_percentage_24h ?? 0
-
+  const token = pairs[0];
 
   return (
-    <main className="min-h-screen bg-black text-white p-6">
+    <main className="min-h-screen bg-[#09090F] p-6 text-white">
 
       <div className="mx-auto max-w-5xl">
 
-        <div className="rounded-3xl border border-white/10 bg-white/5 p-8">
+        {!token ? (
+          <div className="rounded-2xl border border-purple-500/20 bg-[#111119] p-8">
+            <h1 className="text-2xl font-bold">
+              Token not found
+            </h1>
 
+            <p className="mt-2 text-gray-400">
+              No DexScreener data found for this address.
+            </p>
+          </div>
 
-          <div className="flex items-center gap-5">
+        ) : (
 
-            {token.image?.large && (
-              <img
-                src={token.image.large}
-                alt={token.name}
-                className="h-20 w-20 rounded-full"
-              />
-            )}
+          <div className="space-y-6">
 
-
-            <div>
+            <section className="rounded-2xl border border-purple-500/20 bg-[#111119] p-6">
 
               <h1 className="text-4xl font-bold">
-                {token.name}
+                {token.baseToken.name}
               </h1>
 
-              <p className="uppercase text-gray-400">
-                {token.symbol}
+              <p className="mt-2 text-gray-400">
+                {token.baseToken.symbol} • {token.chainId}
               </p>
 
-            </div>
+              <div className="mt-6 flex flex-wrap gap-3">
+
+                <a
+                  href={token.url}
+                  target="_blank"
+                  className="rounded-xl bg-purple-600 px-5 py-3 text-sm font-semibold"
+                >
+                  View DEX Data
+                </a>
+
+                <button
+                  className="rounded-xl border border-white/10 px-5 py-3 text-sm"
+                >
+                  Add Watchlist ⭐
+                </button>
+
+              </div>
+
+            </section>
+
+
+            <section className="grid gap-4 md:grid-cols-2">
+
+              <div className="rounded-2xl bg-[#111119] p-5 border border-purple-500/20">
+                <p className="text-gray-400">
+                  Price
+                </p>
+
+                <p className="mt-2 text-2xl font-bold">
+                  ${token.priceUsd}
+                </p>
+              </div>
+
+
+              <div className="rounded-2xl bg-[#111119] p-5 border border-purple-500/20">
+                <p className="text-gray-400">
+                  DEX
+                </p>
+
+                <p className="mt-2 text-2xl font-bold">
+                  {token.dexId}
+                </p>
+              </div>
+
+
+              <div className="rounded-2xl bg-[#111119] p-5 border border-purple-500/20">
+                <p className="text-gray-400">
+                  Liquidity
+                </p>
+
+                <p className="mt-2 text-xl font-bold">
+                  ${(token.liquidity?.usd || 0).toLocaleString()}
+                </p>
+              </div>
+
+
+              <div className="rounded-2xl bg-[#111119] p-5 border border-purple-500/20">
+                <p className="text-gray-400">
+                  Volume 24h
+                </p>
+
+                <p className="mt-2 text-xl font-bold">
+                  ${(token.volume?.h24 || 0).toLocaleString()}
+                </p>
+              </div>
+
+            </section>
+
+
+            <section className="rounded-2xl border border-purple-500/20 bg-[#111119] p-6">
+
+              <p className="text-gray-400">
+                Contract Address
+              </p>
+
+              <p className="mt-3 break-all text-sm">
+                {token.baseToken.address}
+              </p>
+
+            </section>
+
 
           </div>
 
-
-
-          <div className="mt-8 grid gap-5 md:grid-cols-3">
-
-
-            <div className="rounded-2xl bg-white/5 p-5">
-
-              <p className="text-gray-400">
-                Price
-              </p>
-
-              <p className="mt-2 text-2xl font-bold">
-                ${price.toLocaleString()}
-              </p>
-
-            </div>
-
-
-
-            <div className="rounded-2xl bg-white/5 p-5">
-
-              <p className="text-gray-400">
-                Market Cap
-              </p>
-
-              <p className="mt-2 text-2xl font-bold">
-                ${marketCap.toLocaleString()}
-              </p>
-
-            </div>
-
-
-
-            <div className="rounded-2xl bg-white/5 p-5">
-
-              <p className="text-gray-400">
-                24h Change
-              </p>
-
-              <p className="mt-2 text-2xl font-bold">
-                {change.toFixed(2)}%
-              </p>
-
-            </div>
-
-
-          </div>
-
-
-
-          {chart && (
-            <PriceChart data={chart} />
-          )}
-
-
-
-          <div className="mt-8 rounded-2xl border border-white/10 p-6">
-
-            <h2 className="text-xl font-bold">
-              Luminous AI Insight
-            </h2>
-
-            <p className="mt-3 text-gray-400">
-              AI-powered analysis will evaluate market
-              trends, momentum, volatility and risk.
-            </p>
-
-          </div>
-
-
-        </div>
+        )}
 
       </div>
 
     </main>
-  )
+  );
 }

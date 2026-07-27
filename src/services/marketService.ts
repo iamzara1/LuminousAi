@@ -1,34 +1,26 @@
-import { getBinancePrices } from "./binance";
-import { getCoinGeckoData } from "./coingecko";
-import { getDexTrending } from "./dexscreener";
+import { getTrendingCoins } from "./coingecko";
 
-export async function getMarketOverview() {
-  const [binance, coingecko, dex] = await Promise.allSettled([
-    getBinancePrices(),
-    getCoinGeckoData(),
-    getDexTrending(),
-  ]);
+const BASE_URL = "https://api.coingecko.com/api/v3";
 
-  const binancePrices =
-    binance.status === "fulfilled" ? binance.value : [];
+async function safeFetch(url: string) {
+  try {
+    const res = await fetch(url);
 
-  const coinGeckoPrices =
-    coingecko.status === "fulfilled" ? coingecko.value : [];
+    if (!res.ok) {
+      throw new Error("Market request failed");
+    }
 
-  const merged = coinGeckoPrices.map((coin: any) => {
-    const live = binancePrices.find(
-      (item: any) => item.symbol === coin.symbol
-    );
+    return await res.json();
+  } catch (error) {
+    console.error(error);
+    return null;
+  }
+}
 
-    return {
-      ...coin,
-      price: live?.price ?? coin.price,
-      change: live?.change ?? coin.change,
-    };
-  });
+export async function getGlobalMarket() {
+  return safeFetch(`${BASE_URL}/global`);
+}
 
-  return {
-    prices: merged,
-    trending: dex.status === "fulfilled" ? dex.value : [],
-  };
+export async function getTrendingMarket() {
+  return getTrendingCoins();
 }

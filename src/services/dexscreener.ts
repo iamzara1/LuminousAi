@@ -1,27 +1,37 @@
-const DEXSCREENER_URL = "https://api.dexscreener.com/latest";
+export interface DexPair {
+  chainId: string;
+  dexId: string;
+  pairAddress: string;
+  baseToken: {
+    address: string;
+    name: string;
+    symbol: string;
+  };
+  priceUsd: string;
+  liquidity: {
+    usd: number;
+  };
+  volume: {
+    h24: number;
+  };
+  fdv: number;
+  pairCreatedAt: number;
+  url: string;
+}
 
-export async function getDexTrending() {
-  const response = await fetch(
-    `${DEXSCREENER_URL}/dex/search?q=SOL`,
+export async function getDexData(query: string) {
+  const res = await fetch(
+    `https://api.dexscreener.com/latest/dex/search/?q=${encodeURIComponent(query)}`,
     {
-      next: {
-        revalidate: 120,
-      },
+      cache: "no-store",
     }
   );
 
-  if (!response.ok) {
-    throw new Error("DexScreener API failed");
+  if (!res.ok) {
+    throw new Error("Failed to load DexScreener data");
   }
 
-  const data = await response.json();
+  const data = await res.json();
 
-  return data.pairs?.slice(0, 10).map((pair: any) => ({
-    name: pair.baseToken.name,
-    symbol: pair.baseToken.symbol,
-    price: pair.priceUsd,
-    liquidity: pair.liquidity?.usd,
-    volume: pair.volume?.h24,
-    chain: pair.chainId,
-  })) || [];
+  return (data.pairs || []) as DexPair[];
 }

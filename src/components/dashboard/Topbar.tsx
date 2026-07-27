@@ -1,45 +1,48 @@
 "use client";
 
-import { Bell, UserCircle2 } from "lucide-react";
-import SearchBar from "@/components/search/SearchBar";
+import WalletConnectButton from "@/components/wallet/WalletConnectButton";
+import { Search } from "lucide-react";
 
 export default function Topbar() {
   return (
-    <header className="sticky top-0 z-30 flex h-20 items-center justify-between border-b border-white/10 bg-[#09090B]/80 px-6 backdrop-blur-xl">
-      <div className="flex items-center gap-4">
-        <div className="w-96 max-w-full">
-          <SearchBar />
-        </div>
-      </div>
+    <header className="w-full border-b border-white/10 bg-black/30 backdrop-blur-xl px-4 py-3">
+      <div className="flex items-center justify-between gap-4">
 
-      <div className="flex items-center gap-4">
-        <div className="hidden rounded-2xl border border-white/10 bg-white/5 px-5 py-3 md:block">
-          <p className="text-xs text-gray-400">
-            Portfolio Value
-          </p>
+        {/* Brand */}
+        <div className="flex items-center gap-3">
+          <div className="h-9 w-9 rounded-xl bg-purple-600 flex items-center justify-center">
+            <span className="text-white font-bold">
+              L
+            </span>
+          </div>
 
-          <p className="text-lg font-semibold text-white">
-            $0.00
-          </p>
-        </div>
-
-        <button className="rounded-2xl border border-white/10 bg-white/5 p-3 transition hover:bg-white/10">
-          <Bell size={20} className="text-white" />
-        </button>
-
-        <button className="flex items-center gap-3 rounded-2xl border border-white/10 bg-white/5 px-4 py-2 transition hover:bg-white/10">
-          <UserCircle2 size={34} className="text-purple-400" />
-
-          <div className="hidden text-left md:block">
-            <p className="text-sm font-medium text-white">
-              Welcome
-            </p>
-
+          <div className="hidden sm:block">
+            <h1 className="text-white font-semibold">
+              LuminousAI
+            </h1>
             <p className="text-xs text-gray-400">
-              LuminousAI User
+              Crypto Intelligence
             </p>
           </div>
-        </button>
+        </div>
+
+
+        {/* Search */}
+        <div className="hidden md:flex flex-1 max-w-md items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-3 py-2">
+          <Search size={18} className="text-gray-400" />
+
+          <input
+            placeholder="Search tokens, wallets..."
+            className="w-full bg-transparent outline-none text-sm text-white placeholder:text-gray-500"
+          />
+        </div>
+
+
+        {/* Wallet */}
+        <div>
+          <WalletConnectButton />
+        </div>
+
       </div>
     </header>
   );

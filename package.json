@@ -11,16 +11,24 @@
   "dependencies": {
     "@auth/core": "^0.41.3",
     "@auth/prisma-adapter": "^2.11.3",
+    "@google/genai": "^2.13.0",
     "@prisma/client": "^7.9.0",
+    "@reown/appkit": "^1.8.23",
+    "@reown/appkit-adapter-wagmi": "^1.8.23",
     "@supabase/ssr": "^0.12.3",
     "@supabase/supabase-js": "^2.110.8",
+    "@walletconnect/ethereum-provider": "^2.23.10",
+    "ai": "^7.0.37",
     "bcryptjs": "^3.0.3",
     "lucide-react": "^1.25.0",
     "next": "16.2.11",
     "prisma": "^7.9.0",
     "react": "19.2.4",
     "react-dom": "19.2.4",
-    "recharts": "^3.10.0"
+    "recharts": "^3.10.0",
+    "rss-parser": "^3.13.0",
+    "viem": "^2.55.8",
+    "wagmi": "^3.7.4"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",

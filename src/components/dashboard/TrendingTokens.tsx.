@@ -1,0 +1,103 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import { ArrowUpRight, ArrowDownRight } from "lucide-react";
+import { getMarketPrices } from "@/services/coingecko";
+
+const tokens = [
+  {
+    id: "bitcoin",
+    name: "Bitcoin",
+    symbol: "BTC",
+  },
+  {
+    id: "ethereum",
+    name: "Ethereum",
+    symbol: "ETH",
+  },
+  {
+    id: "solana",
+    name: "Solana",
+    symbol: "SOL",
+  },
+  {
+    id: "okb",
+    name: "OKB",
+    symbol: "OKB",
+  },
+];
+
+export default function TrendingTokens() {
+  const [prices, setPrices] = useState<any>({});
+
+  useEffect(() => {
+    async function load() {
+      const data = await getMarketPrices();
+      setPrices(data || {});
+    }
+
+    load();
+  }, []);
+
+  return (
+    <section className="rounded-2xl border border-white/10 bg-[#0D0D14] p-4 sm:p-6">
+
+      <h2 className="mb-4 text-lg font-bold text-white">
+        🔥 Trending Tokens
+      </h2>
+
+      <div className="space-y-3">
+        {tokens.map((token) => {
+          const market = prices[token.id];
+          const change = market?.usd_24h_change || 0;
+          const positive = change >= 0;
+
+          return (
+            <div
+              key={token.id}
+              className="flex items-center justify-between rounded-xl bg-white/[0.03] p-3"
+            >
+              <div>
+                <p className="text-sm font-semibold text-white">
+                  {token.name}
+                </p>
+
+                <p className="text-xs text-gray-400">
+                  {token.symbol}
+                </p>
+              </div>
+
+              <div className="text-right">
+                <p className="text-sm font-bold text-white">
+                  {market
+                    ? `$${market.usd.toLocaleString()}`
+                    : "..."}
+                </p>
+
+                <div
+                  className={`flex items-center justify-end gap-1 text-xs ${
+                    positive
+                      ? "text-green-400"
+                      : "text-red-400"
+                  }`}
+                >
+                  {positive ? (
+                    <ArrowUpRight size={13} />
+                  ) : (
+                    <ArrowDownRight size={13} />
+                  )}
+
+                  {market
+                    ? `${change.toFixed(2)}%`
+                    : ""}
+                </div>
+              </div>
+
+            </div>
+          );
+        })}
+      </div>
+
+    </section>
+  );
+}
