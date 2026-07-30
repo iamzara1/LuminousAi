@@ -1,0 +1,18 @@
+import clsx from "clsx";
+
+interface SkeletonProps {
+  className?: string;
+}
+
+export default function Skeleton({
+  className,
+}: SkeletonProps) {
+  return (
+    <div
+      className={clsx(
+        "animate-pulse rounded-xl bg-[#1B2130]",
+        className
+      )}
+    />
+  );
+}

@@ -1,83 +1,59 @@
-"use client";
+import StatCard from "@/components/ui/StatCard";
 
-import { useEffect, useState } from "react";
-import { DollarSign, Activity, PieChart, TrendingUp } from "lucide-react";
-import { getGlobalMarket } from "@/services/marketService";
+interface MarketOverviewProps {
+  btc: string;
+  eth: string;
+  bnb: string;
+  sol: string;
+  marketCap: string;
+  volume24h: string;
+  btcDominance: string;
+  fearGreed: string;
+}
 
-export default function MarketOverview() {
-  const [market, setMarket] = useState<any>(null);
-
-  useEffect(() => {
-    async function load() {
-      const data = await getGlobalMarket();
-
-      if (data?.data) {
-        setMarket(data.data);
-      }
-    }
-
-    load();
-  }, []);
-
-  const cards = [
-    {
-      title: "Market Cap",
-      value: market
-        ? `$${Math.round(
-            market.total_market_cap.usd / 1_000_000_000_000
-          )}T`
-        : "--",
-      icon: DollarSign,
-    },
-    {
-      title: "24H Volume",
-      value: market
-        ? `$${Math.round(
-            market.total_volume.usd / 1_000_000_000
-          )}B`
-        : "--",
-      icon: Activity,
-    },
-    {
-      title: "BTC Dominance",
-      value: market
-        ? `${market.market_cap_percentage.btc.toFixed(1)}%`
-        : "--",
-      icon: PieChart,
-    },
-    {
-      title: "Active Coins",
-      value: market
-        ? market.active_cryptocurrencies.toLocaleString()
-        : "--",
-      icon: TrendingUp,
-    },
-  ];
-
+export default function MarketOverview({
+  btc,
+  eth,
+  bnb,
+  sol,
+  marketCap,
+  volume24h,
+  btcDominance,
+  fearGreed,
+}: MarketOverviewProps) {
   return (
-    <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-      {cards.map((card) => {
-        const Icon = card.icon;
+    <section className="space-y-5">
 
-        return (
-          <div
-            key={card.title}
-            className="rounded-2xl border border-white/10 bg-[#0D0D14] p-5"
-          >
-            <div className="flex items-center justify-between">
-              <span className="text-sm text-gray-400">
-                {card.title}
-              </span>
+      <div>
+        <h2 className="text-2xl font-bold text-white">
+          Global Market
+        </h2>
 
-              <Icon size={18} className="text-violet-400" />
-            </div>
+        <p className="text-slate-400">
+          Live cryptocurrency market overview
+        </p>
+      </div>
 
-            <h2 className="mt-4 text-2xl font-semibold text-white">
-              {card.value}
-            </h2>
-          </div>
-        );
-      })}
+      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+
+        <StatCard title="Bitcoin" value={btc} />
+
+        <StatCard title="Ethereum" value={eth} />
+
+        <StatCard title="BNB" value={bnb} />
+
+        <StatCard title="Solana" value={sol} />
+
+        <StatCard title="Market Cap" value={marketCap} />
+
+        <StatCard title="24H Volume" value={volume24h} />
+
+        <StatCard title="BTC Dominance" value={btcDominance} />
+
+        <StatCard title="Fear & Greed" value={fearGreed} />
+
+      </div>
+
     </section>
   );
 }

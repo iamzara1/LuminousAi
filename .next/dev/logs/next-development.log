@@ -1,2 +1,11 @@
-{"timestamp":"00:00:19.326","source":"Server","level":"LOG","message":""}
-{"timestamp":"00:00:22.422","source":"Server","level":"LOG","message":"○ Compiling /news ..."}
+{"timestamp":"00:00:17.249","source":"Server","level":"LOG","message":""}
+{"timestamp":"00:00:20.507","source":"Server","level":"LOG","message":"○ Compiling /dashboard ..."}
+{"timestamp":"00:03:47.714","source":"Server","level":"WARN","message":"Lit is in dev mode. Not recommended for production! See https://lit.dev/msg/dev-mode for more information."}
+{"timestamp":"00:03:47.722","source":"Server","level":"ERROR","message":"(node:13691) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.\n(Use `node --trace-warnings ...` to show where the warning was created)"}
+{"timestamp":"00:05:13.006","source":"Server","level":"LOG","message":"○ Compiling /news ..."}
+{"timestamp":"00:05:26.607","source":"Browser","level":"INFO","message":"%cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold"}
+{"timestamp":"00:05:51.638","source":"Browser","level":"INFO","message":"%cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold"}
+{"timestamp":"00:06:15.928","source":"Browser","level":"INFO","message":"%cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold"}
+{"timestamp":"00:06:18.443","source":"Browser","level":"INFO","message":"%cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold"}
+{"timestamp":"00:07:24.899","source":"Server","level":"LOG","message":"○ Compiling /signup ..."}
+{"timestamp":"00:09:30.637","source":"Browser","level":"INFO","message":"%cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold"}

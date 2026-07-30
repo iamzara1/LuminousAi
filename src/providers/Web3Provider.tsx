@@ -1,11 +1,7 @@
 "use client";
 
 import { ReactNode } from "react";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { WagmiProvider } from "wagmi";
-import { config } from "@/config/wallet";
-
-const queryClient = new QueryClient();
+import { WalletProvider } from "@/context/WalletContext";
 
 export default function Web3Provider({
   children,
@@ -13,10 +9,8 @@ export default function Web3Provider({
   children: ReactNode;
 }) {
   return (
-    <WagmiProvider config={config}>
-      <QueryClientProvider client={queryClient}>
-        {children}
-      </QueryClientProvider>
-    </WagmiProvider>
+    <WalletProvider>
+      {children}
+    </WalletProvider>
   );
 }

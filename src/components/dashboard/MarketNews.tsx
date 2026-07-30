@@ -1,51 +1,73 @@
-type NewsItem = {
+import Card from "@/components/ui/Card";
+import Badge from "@/components/ui/Badge";
+
+export interface NewsItem {
+  id: string;
   title: string;
   source: string;
-  time: string;
-};
+  publishedAt: string;
+  sentiment: "Bullish" | "Bearish" | "Neutral";
+}
 
-const news: NewsItem[] = [
-  {
-    title: "Bitcoin holds above key support as traders await market direction.",
-    source: "Luminous News",
-    time: "5m ago",
-  },
-  {
-    title: "Ethereum ecosystem activity continues to increase.",
-    source: "Luminous News",
-    time: "18m ago",
-  },
-  {
-    title: "Solana trading volume rises across major exchanges.",
-    source: "Luminous News",
-    time: "35m ago",
-  },
-];
+interface MarketNewsProps {
+  news: NewsItem[];
+}
 
-export default function MarketNews() {
+export default function MarketNews({
+  news,
+}: MarketNewsProps) {
   return (
-    <section className="rounded-2xl border border-white/10 bg-[#0D0D14] p-5">
-      <h2 className="mb-5 text-lg font-semibold text-white">
-        Market News
-      </h2>
+    <Card className="p-6">
+
+      <div className="mb-6 flex items-center justify-between">
+        <h2 className="text-xl font-semibold text-white">
+          Market Intelligence
+        </h2>
+
+        <Badge variant="info">
+          Live News
+        </Badge>
+      </div>
 
       <div className="space-y-4">
-        {news.map((item, index) => (
-          <article
-            key={index}
-            className="rounded-xl border border-white/5 bg-[#13131C] p-4"
+
+        {news.map((item) => (
+          <div
+            key={item.id}
+            className="rounded-xl border border-[#23293A] p-4"
           >
-            <h3 className="text-sm font-medium text-white">
+            <h3 className="font-medium text-white">
               {item.title}
             </h3>
 
-            <div className="mt-2 flex items-center justify-between text-xs text-gray-400">
-              <span>{item.source}</span>
-              <span>{item.time}</span>
+            <div className="mt-3 flex items-center justify-between text-sm">
+
+              <span className="text-slate-400">
+                {item.source}
+              </span>
+
+              <Badge
+                variant={
+                  item.sentiment === "Bullish"
+                    ? "success"
+                    : item.sentiment === "Bearish"
+                    ? "danger"
+                    : "warning"
+                }
+              >
+                {item.sentiment}
+              </Badge>
+
             </div>
-          </article>
+
+            <p className="mt-2 text-xs text-slate-500">
+              {item.publishedAt}
+            </p>
+          </div>
         ))}
+
       </div>
-    </section>
+
+    </Card>
   );
 }
